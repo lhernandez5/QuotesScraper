@@ -4,9 +4,9 @@ import puppeteer from "puppeteer";
 const app = express();
 const PORT = 3000;
 
+//puppeteer function to scrape quotes
 const scrapeQuotes = async () => {
-  // puppeteer session started with a
-  // visible browser-easier to debug
+  // puppeteer session started with a visible browser-easier to debug
   // and no default viewport-page will be in full width and height
   const browser = await puppeteer.launch({
     headless: false,
@@ -22,11 +22,13 @@ const scrapeQuotes = async () => {
   });
 
   let lastPageReached = false;
-  const data_points = [];
+  const data = [];
+
+  //scrape quotes will there is a next page
   do {
     const nextPageLink = await page.$(".pager > .next > a");
 
-    const data = await page.evaluate(() => {
+    const quotes = await page.evaluate(() => {
       const quoteList = document.querySelectorAll(".quote");
       return Array.from(quoteList).map((quote) => {
         const text = quote.querySelector(".text").innerHTML;
@@ -36,23 +38,27 @@ const scrapeQuotes = async () => {
     });
 
     if (nextPageLink) {
+      // click the next page link
       await nextPageLink.click();
+      // wait for navigation to complete
       await page.waitForNavigation();
     } else {
       console.log("No more pages to read.");
       lastPageReached = true;
     }
-    // return data;
-    data_points.push(data);
+
+    data.push(quotes);
   } while (!lastPageReached);
-  return data_points;
-  // await browser.close();
-  // return data;
+
+  await browser.close();
+  return data;
 };
 
+//with this api endpoint the server will provide the scraped data from scrapeQuotes function
 app.get("/scraped-data", async (req, res) => {
   try {
     const data = await scrapeQuotes();
+    //scraped data is sent to client as JSON response
     res.json(data);
   } catch (error) {
     console.log("Error scraping website:", error);
@@ -60,6 +66,7 @@ app.get("/scraped-data", async (req, res) => {
   }
 });
 
+// this middleware serves static files from the 'public' directory
 app.use(express.static("public"));
 
 app.listen(PORT, () => {
