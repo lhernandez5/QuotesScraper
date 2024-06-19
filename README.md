@@ -1,4 +1,4 @@
-# QuotesScaper
+# Web Scraper
 ### Website scraped: http://quotes.toscrape.com/
 
 ### Tech Stack:
