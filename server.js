@@ -1,6 +1,10 @@
+import express from "express";
 import puppeteer from "puppeteer";
 
-const getQuotes = async () => {
+const app = express();
+const PORT = 3000;
+
+const scrapeQuotes = async () => {
   // puppeteer session started with a
   // visible browser-easier to debug
   // and no default viewport-page will be in full width and height
@@ -18,10 +22,11 @@ const getQuotes = async () => {
   });
 
   let lastPageReached = false;
-
+  const data_points = [];
   do {
     const nextPageLink = await page.$(".pager > .next > a");
-    const quotes = await page.evaluate(() => {
+
+    const data = await page.evaluate(() => {
       const quoteList = document.querySelectorAll(".quote");
       return Array.from(quoteList).map((quote) => {
         const text = quote.querySelector(".text").innerHTML;
@@ -30,22 +35,33 @@ const getQuotes = async () => {
       });
     });
 
-    console.log(quotes.length);
-
     if (nextPageLink) {
-      // click the next page link
       await nextPageLink.click();
-
-      // wait for navigation to complete
       await page.waitForNavigation();
     } else {
       console.log("No more pages to read.");
       lastPageReached = true;
     }
+    // return data;
+    data_points.push(data);
   } while (!lastPageReached);
-
-  // close the browser
-  await browser.close();
+  return data_points;
+  // await browser.close();
+  // return data;
 };
 
-getQuotes();
+app.get("/scraped-data", async (req, res) => {
+  try {
+    const data = await scrapeQuotes();
+    res.json(data);
+  } catch (error) {
+    console.log("Error scraping website:", error);
+    res.status(500).json({ error });
+  }
+});
+
+app.use(express.static("public"));
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
