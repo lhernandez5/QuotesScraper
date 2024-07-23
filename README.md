@@ -1,4 +1,4 @@
-# Web Scraper
+# Javascript Web Scraper
 ## Website scraped: http://quotes.toscrape.com/
 
 Tools used:
