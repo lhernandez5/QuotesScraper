@@ -1,5 +1,6 @@
 # Javascript Web Scraper
-## Website scraped: http://quotes.toscrape.com/
+
+This app scrapes the quotes from every page on http://quotes.toscrape.com/.
 
 Tools used:
 - Javascript
