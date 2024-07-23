@@ -14,6 +14,6 @@ To the run the app you need to install:
 
 To run:
 1. Navigate to project directory and install dependencies:
-   npm install
+npm install
 2. Execute start command:
-   npm start
+npm start
