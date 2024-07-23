@@ -1,9 +1,19 @@
 # Web Scraper
-### Website scraped: http://quotes.toscrape.com/
+## Website scraped: http://quotes.toscrape.com/
 
-### Tech Stack:
- 1. Javascript
- 2. Node.js
- 3. Express.js
- 4. Puppeteer
- 6. Bootstrap
+Tools used:
+- Javascript
+- Node.js
+- Express.js
+- Puppeteer
+- Bootstrap
+
+To the run the app you need to install:
+- node.js
+- npm
+
+To run:
+1. Navigate to project directory and install dependencies:
+   npm install
+2. Execute start command:
+   npm start
